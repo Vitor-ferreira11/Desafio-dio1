@@ -1,47 +1,27 @@
-// Carrega o módulo readline
-const readline = require('readline');
-
-// Cria a interface de leitura para capturar a entrada do usuário
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
-
-// Função para classificar o herói com base na XP
-function classificarHeroi() {
-    // Entrada de dados (nome)
-    rl.question("Digite o nome do herói: ", function(nome) {
-        rl.question("Digite a quantidade de experiência (XP) do herói: ", function(xp) {
-            xp = parseInt(xp); // Converte XP para número inteiro
-
-            // Definindo o nível com base na XP
-            let nivel;
-            if (xp < 1000) {
-                nivel = "Ferro";
-            } else if (xp >= 1001 && xp <= 2000) {
-                nivel = "Bronze";
-            } else if (xp >= 2001 && xp <= 5000) {
-                nivel = "Prata";
-            } else if (xp >= 5001 && xp <= 7000) {
-                nivel = "Ouro";
-            } else if (xp >= 7001 && xp <= 8000) {
-                nivel = "Platina";
-            } else if (xp >= 8001 && xp <= 9000) {
-                nivel = "Ascendente";
-            } else if (xp >= 9001 && xp <= 10000) {
-                nivel = "Imortal";
-            } else {
-                nivel = "Radiante";
-            }
-
-            // Saída
-            console.log(`O Herói de nome ${nome} está no nível de ${nivel}`);
-
-            // Fecha a interface readline
-            rl.close();
+function nivelPorXp(xp) {
+    if (!Number.isSafeInteger(xp) || xp < 0) throw new RangeError('XP deve ser um inteiro não negativo.');
+    if (xp <= 1000) return 'Ferro';
+    if (xp <= 2000) return 'Bronze';
+    if (xp <= 5000) return 'Prata';
+    if (xp <= 7000) return 'Ouro';
+    if (xp <= 8000) return 'Platina';
+    if (xp <= 9000) return 'Ascendente';
+    if (xp <= 10000) return 'Imortal';
+    return 'Radiante';
+}
+if (require.main === module) {
+    const rl = require('node:readline').createInterface({ input: process.stdin, output: process.stdout });
+    rl.question('Digite o nome do herói: ', (nome) => {
+        rl.question('Digite a quantidade de experiência (XP) do herói: ', (entrada) => {
+            try {
+                if (!nome.trim()) throw new Error('Informe o nome do herói.');
+                if (!/^\d+$/.test(entrada.trim())) throw new Error('XP deve ser um inteiro não negativo.');
+                console.log('O Herói de nome ' + nome.trim() + ' está no nível de ' + nivelPorXp(Number(entrada)));
+            } catch (error) {
+                console.error(error.message);
+                process.exitCode = 1;
+            } finally { rl.close(); }
         });
     });
 }
-
-// Chama a função para executar
-classificarHeroi();
+module.exports = { nivelPorXp };
